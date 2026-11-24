@@ -1,0 +1,7 @@
+{
+  global:
+    JNI_OnLoad;
+    Java_com_rz_videoslicer_engine_NativeEngine_*;
+  local:
+    *;
+};

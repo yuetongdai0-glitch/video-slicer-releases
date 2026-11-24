@@ -1,0 +1,79 @@
+--- a/libavcodec/mediacodecenc.c
++++ b/libavcodec/mediacodecenc.c
+@@ -183,7 +183,7 @@
+     return ret;
+ }
+ 
+-static int mediacodec_generate_extradata(AVCodecContext *avctx);
++static int mediacodec_generate_extradata(AVCodecContext *avctx, FFAMediaFormat *format);
+ 
+ static av_cold int mediacodec_init(AVCodecContext *avctx)
+ {
+@@ -383,7 +383,7 @@
+         goto bailout;
+     }
+ 
+-    ret = mediacodec_generate_extradata(avctx);
++    ret = mediacodec_generate_extradata(avctx, format);
+ 
+ bailout:
+     if (format)
+@@ -419,8 +419,10 @@
+     if (index < 0)
+         return AVERROR_EXTERNAL;
+ 
+-    if (out_info.flags & ff_AMediaCodec_getBufferFlagEndOfStream(codec))
+-        return AVERROR_EOF;
++    if (out_info.flags & ff_AMediaCodec_getBufferFlagEndOfStream(codec)) {
++        ret = AVERROR_EOF;
++        goto bailout;
++    }
+ 
+     out_buf = ff_AMediaCodec_getOutputBuffer(codec, index, &out_size);
+     if (!out_buf) {
+@@ -641,7 +643,7 @@
+     return ret;
+ }
+ 
+-static int mediacodec_generate_extradata(AVCodecContext *avctx)
++static int mediacodec_generate_extradata(AVCodecContext *avctx, FFAMediaFormat *format)
+ {
+     MediaCodecEncContext *s = avctx->priv_data;
+     AVPacket *pkt = NULL;
+@@ -684,8 +686,35 @@
+ 
+ bailout:
+     if (s->eof_sent) {
++        int err = 0;
+         s->eof_sent = 0;
+-        ff_AMediaCodec_flush(s->codec);
++        /* Some encoders (e.g. Codec2 c2.android.avc.encoder) stay in the
++         * end-of-stream state after flush(), and even after stop/configure/start
++         * they hand out a stale EOS buffer, so every later packet is lost.
++         * Replace the probed codec with a fresh instance instead. A surface
++         * input belongs to the old codec, so keep the in-place restart there. */
++        if (!s->window) {
++            char *name = ff_AMediaCodec_getName(s->codec);
++            ff_AMediaCodec_stop(s->codec);
++            ff_AMediaCodec_delete(s->codec);
++            s->codec = name ? ff_AMediaCodec_createCodecByName(name, s->use_ndk_codec) : NULL;
++            av_free(name);
++            if (!s->codec)
++                err = AVERROR_EXTERNAL;
++        } else {
++            ff_AMediaCodec_stop(s->codec);
++        }
++        if (!err)
++            err = ff_AMediaCodec_configure(s->codec, format, s->window, NULL,
++                                           ff_AMediaCodec_getConfigureFlagEncode(s->codec));
++        if (!err)
++            err = ff_AMediaCodec_start(s->codec);
++        if (err) {
++            av_log(avctx, AV_LOG_ERROR, "MediaCodec restart after extradata probe failed, %s\n",
++                   av_err2str(err));
++            if (ret >= 0)
++                ret = err;
++        }
+     }
+     av_bsf_flush(s->bsf);
+     av_packet_free(&pkt);
