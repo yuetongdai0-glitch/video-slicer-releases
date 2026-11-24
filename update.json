@@ -1,14 +1,14 @@
 {
   "appId": "com.rz.videoslicer",
-  "versionName": "2.1.0",
-  "versionCode": 7,
-  "publishedAt": "2026-11-24T05:59:13.926449+00:00",
+  "versionName": "2.1.1",
+  "versionCode": 8,
+  "publishedAt": "2026-11-24T06:29:35.593838+00:00",
   "android": {
-    "versionName": "2.1.0",
-    "versionCode": 7,
+    "versionName": "2.1.1",
+    "versionCode": 8,
     "minSdk": 29,
-    "apkBytes": 79489315,
-    "sha256": "850ae4b24573c42c5fa3ce041783a9e945f72069797bff8129bca5f7ee869271",
-    "apkUrl": "https://yuetongdai0-glitch.github.io/video-slicer-releases/releases/android/latest.apk?v=7"
+    "apkBytes": 79488843,
+    "sha256": "11339b30702ebe30330de03f8ecd5c64a0f1c893036cab45de0491b417a12b97",
+    "apkUrl": "https://yuetongdai0-glitch.github.io/video-slicer-releases/releases/android/latest.apk?v=8"
   }
 }
