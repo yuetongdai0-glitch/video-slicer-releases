@@ -3,10 +3,10 @@
 离线视频切片与本地工具箱，保存最新安卓安装包、更新清单与内置媒体引擎的对应源码。
 
 - [下载安装页](https://yuetongdai0-glitch.github.io/video-slicer-releases/)
-- [直接下载 APK](https://yuetongdai0-glitch.github.io/video-slicer-releases/releases/android/latest.apk?v=6)
+- [直接下载 APK](https://yuetongdai0-glitch.github.io/video-slicer-releases/releases/android/latest.apk?v=7)
 - [更新清单](https://yuetongdai0-glitch.github.io/video-slicer-releases/update.json)
-- 当前版本：2.0.0（6），Android 10+
-- SHA-256：`74490c2363e3c6a9910fd44d9830215538441581844bf8b87728dff4341c5f0a`
+- 当前版本：2.1.0（7），Android 10+
+- SHA-256：`850ae4b24573c42c5fa3ce041783a9e945f72069797bff8129bca5f7ee869271`
 
 应用内仅在用户主动检查或下载更新时联网。无账号、广告、统计和视频上传。源码由 `yuetongdai0-glitch/video-slicer` 单独管理。发布签名保存在源码仓库外，不公开。
 
